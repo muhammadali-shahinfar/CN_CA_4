@@ -11,10 +11,10 @@ int main(int argc, char *argv[])
     int i;
     std::cin >> i;
     if(i ==0){
-        Server* server = new Server(1);
+        Server* server = new Server(3);
     }
     else{
-        client* new_client = new client();
+        client* new_client = new client(i);
     }
 
     return a.exec();

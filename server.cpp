@@ -9,7 +9,8 @@ Server::Server(int n,QObject *parent)
 
 
     for(int i=0;i<n;i++){
-        serverThread* thread = new serverThread(this);
-        thread->run();
+        serverThread* thread = new serverThread(i+1,this);
+        thread->start();
+        // thread->run();
     }
 }
