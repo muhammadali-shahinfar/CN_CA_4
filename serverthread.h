@@ -21,6 +21,8 @@ private:
     int client_num;
     SOCKET server_socket;
     void end_simulation(SOCKET init_socket);
+    sockaddr_in create_sockaddr_in();
+    void start_messaging();
 };
 
 #endif // SERVERTHREAD_H

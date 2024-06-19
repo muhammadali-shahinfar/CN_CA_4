@@ -2,9 +2,27 @@
 #include <QRandomGenerator>
 #include <iostream>
 #include <algorithm>
+#include <QThread>
 
-client::client(int n) {
+sockaddr_in client::create_sockaddr_in() {
+    sockaddr_in serverAddress;
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_port = htons(8025 + this->client_number);
+    serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
 
+    return serverAddress;
+}
+
+void client::start_messaging() {
+    send_SYN();
+    recv_ack_syn();
+    send_ack();
+    send_message();
+}
+
+client::client(int n,QObject *parent) : QObject{parent} {
+    QThread* new_router_thread = new QThread();
+    this->moveToThread(new_router_thread);
     this->client_number = n;
 
     WSADATA wsaData;
@@ -12,23 +30,12 @@ client::client(int n) {
         printf("WSAStartup failed.\n");
         exit(EXIT_FAILURE);
     }
-
     this->client_socket = socket(AF_INET, SOCK_STREAM, 0);
-
     // specifying address
-    sockaddr_in serverAddress;
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(8025 + n);
-    serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
-
+    sockaddr_in serverAddress = create_sockaddr_in();
     // sending connection request
-    connect(client_socket, (struct sockaddr *)&serverAddress,
-            sizeof(serverAddress));
-
-    send_SYN();
-    recv_ack_syn();
-    send_ack();
-    send_message();
+    WSAAPI::connect(client_socket, (struct sockaddr *)&serverAddress, sizeof(serverAddress));
+    start_messaging();
 
 }
 
@@ -39,6 +46,7 @@ void client::send_SYN(){
     this->sync_value = random_value;
     std::cout << "client SyN:" << random_value << std::endl;
 }
+
 void client::recv_ack_syn(){
     char buffer[1024] = {0}; // maybe has bug
     recv(this->client_socket,buffer, sizeof(buffer), 0);
@@ -55,6 +63,7 @@ void client::recv_ack_syn(){
     else
         send_SYN();
 }
+
 bool client::recv_ack(){
     char buffer[1024] = {0};
     char* end;
@@ -68,8 +77,9 @@ bool client::recv_ack(){
     }
     else
         std::cout << "ack didnt received" << std::endl;
-        return false;
+    return false;
 }
+
 void client::send_ack(){
     int ack = this->server_sync_value + 1;
     std::string message = std::to_string((ack));
@@ -78,26 +88,34 @@ void client::send_ack(){
 
 }
 
+// void client::send_message(){
+//     std::string message = "message from client" + std::to_string(this->client_number);
+//     QList<std::string> packets = create_packets(message);
+//     for(int i=0;i<packets.size();i++){
+//         send(this->client_socket,packets[i].c_str(),strlen(packets[i].c_str()),0);
+//         while(!recv_ack()){
+//             send(this->client_socket,packets[i].c_str(),strlen(packets[i].c_str()),0);
+//         }
+//     }
+//     end_simulation();
+// }
+
 void client::send_message(){
     while(true){
         std::string message;
         getline(std::cin,message);
         QList<std::string> packets = create_packets(message);
         for(int i=0;i<packets.size();i++){
-
             send(this->client_socket,packets[i].c_str(),strlen(packets[i].c_str()),0);
             while(!recv_ack()){
                 send(this->client_socket,packets[i].c_str(),strlen(packets[i].c_str()),0);
             }
-
         }
         if(message.compare("quit")==0){
             end_simulation();
             break;
         }
     }
-
-
 }
 
 QList<std::string> client::create_packets(std::string message){
@@ -111,6 +129,7 @@ QList<std::string> client::create_packets(std::string message){
     }
     return string_packets;
 }
+
 void client::end_simulation() {
     closesocket(client_socket);
     WSACleanup();

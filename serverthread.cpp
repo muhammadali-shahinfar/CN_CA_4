@@ -3,14 +3,19 @@
 #include <QRandomGenerator>
 #include <string>
 
-serverThread::serverThread(int n,QObject *parent)
-    : QThread{parent}
-{
+serverThread::serverThread(int n,QObject *parent) : QThread{parent} {
     this->client_num = n;
 }
 
-void serverThread::run(){
+sockaddr_in serverThread::create_sockaddr_in() {
+    sockaddr_in serverAddress;
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_port = htons(8025 + this->client_num);
+    serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
+    return serverAddress;
+}
 
+void serverThread::run(){
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
         printf("WSAStartup failed.\n");
@@ -21,23 +26,21 @@ void serverThread::run(){
         std::cout <<(WSAGetLastError());
         exit(EXIT_FAILURE);
     }
-    sockaddr_in serverAddress;
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(8025 + this->client_num);
-    serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
-    bind(init_socket, (struct sockaddr*)&serverAddress,
-         sizeof(serverAddress));
+    sockaddr_in serverAddress = create_sockaddr_in();
+    bind(init_socket, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
     listen(init_socket, 5);
     this->server_socket = accept(init_socket, nullptr, nullptr);
+    start_messaging();
+}
+
+void serverThread::start_messaging() {
     recv_syn();
     send_syn_ack();
     recv_ack();
     recv_message();
 }
 
-
-void serverThread::recv_syn(){
-
+void serverThread::recv_syn() {
     char buffer[1024] = {0}; // maybe has bug
     recv(this->server_socket,buffer, sizeof(buffer), 0);
     std::cout << "client syn:" << buffer << std::endl;
@@ -45,8 +48,8 @@ void serverThread::recv_syn(){
     this->client_syn = strtol(buffer,&end,10);
     std::cout << "client syn:" << this->client_syn << std::endl;
 }
-void serverThread::send_syn_ack(){
 
+void serverThread::send_syn_ack() {
     int random_value = QRandomGenerator::global()->generate();
     std::string message = std::to_string((random_value));
     message += " " + std::to_string(this->client_syn + 1);
@@ -55,6 +58,7 @@ void serverThread::send_syn_ack(){
     this->syn = random_value;
     this->client_syn++;
 }
+
 void serverThread::recv_ack(){
 
     char buffer[1024] = {0}; // maybe has bug
@@ -69,9 +73,7 @@ void serverThread::recv_ack(){
     else send_syn_ack();
 }
 
-
-void serverThread::end_simulation(SOCKET init_socket)
-{
+void serverThread::end_simulation(SOCKET init_socket) {
     closesocket(init_socket);
     WSACleanup();
 }
@@ -93,19 +95,14 @@ void serverThread::recv_message(){
     }
     end_simulation(this->server_socket);
 }
-void replaceCharacter(char* str, char c1, char c2)
-{
-
+void replaceCharacter(char* str, char c1, char c2) {
     int j, n = strlen(str);
     for (int i = j = 0; i < n; i++) {
-        if (str[i] != c1) {
+        if (str[i] != c1)
             str[j++] = str[i];
-        }
-        else {
+        else
             str[j++] = c2;
-        }
     }
-
     str[j] = '\0';
 }
 

@@ -3,13 +3,12 @@
 #include <QList>
 #include <string>
 #include <winsock2.h>
+#include <QObject>
 
-
-class client
-{
+class client : public QObject {
+    // Q_OBJECT
 public:
-    void extracted();
-    client(int n);
+    client(int n,QObject *parent=nullptr);
 
 private:
     SOCKET client_socket;
@@ -23,6 +22,8 @@ private:
     void send_message();
     void end_simulation();
     QList<std::string> create_packets(std::string message);
+    sockaddr_in create_sockaddr_in();
+    void start_messaging();
 };
 
 #endif // CLIENT_H
