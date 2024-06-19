@@ -1,11 +1,12 @@
 #include <iostream>
 #include <cstdlib>
 #include <unistd.h>
+#include <QObject>
 #include "defs.h"
 using namespace std;
 
 
-class Server {
+class Server: public QObject {
 private:
     int sockfd;
     struct sockaddr_in serverAddr, clientAddr;
@@ -13,11 +14,11 @@ private:
     int ssthresh;
 
 public:
-    Server() {
+    Server(QObject* parent = nullptr): QObject{parent}  {
         cwnd = 1;
         ssthresh = MAX_WINDOW_SIZE;
 
-        sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+            sockfd = socket(AF_INET, SOCK_DGRAM, 0);
         if (sockfd < 0) {
             cerr << "Failed to create socket" << endl;
             exit(1);

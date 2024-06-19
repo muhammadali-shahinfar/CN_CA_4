@@ -1,17 +1,22 @@
 #include <iostream>
 #include <unistd.h>
-
+#include <QObject>
 #include "defs.h"
 
 using namespace std;
 
-class Client {
+class Client: public QObject {
 private:
     int sockfd;
     struct sockaddr_in serverAddr;
 
 public:
-    Client() {
+    Client(QObject* parent = nullptr): QObject{parent} {
+        WSADATA wsaData;
+        if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+            printf("WSAStartup failed.\n");
+            exit(EXIT_FAILURE);
+        }
         sockfd = socket(AF_INET, SOCK_DGRAM, 0);
         if (sockfd < 0) {
             cerr << "Failed to create socket" << endl;
