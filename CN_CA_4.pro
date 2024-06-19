@@ -8,6 +8,8 @@ CONFIG += c++17 cmdline
 
 SOURCES += \
         client.cpp \
+        congest_client.cpp \
+        congest_server.cpp \
         main.cpp \
         server.cpp \
         serverthread.cpp
@@ -19,5 +21,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 LIBS += -lws2_32
 HEADERS += \
     client.h \
+    defs.h \
     server.h \
     serverthread.h

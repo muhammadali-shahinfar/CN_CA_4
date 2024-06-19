@@ -1,0 +1,45 @@
+#include <iostream>
+#include <unistd.h>
+
+#include "defs.h"
+
+using namespace std;
+
+class Client {
+private:
+    int sockfd;
+    struct sockaddr_in serverAddr;
+
+public:
+    Client() {
+        sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+        if (sockfd < 0) {
+            cerr << "Failed to create socket" << endl;
+            exit(1);
+        }
+
+        serverAddr.sin_family = AF_INET;
+        serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+        serverAddr.sin_port = htons(SERVER_PORT);
+    }
+
+    void sendRequest() {
+        char buffer[] = "Request";
+        sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+    }
+
+    void receiveResponse() {
+        char recvBuffer[1024];
+        socklen_t serverAddrLen = sizeof(serverAddr);
+        recvfrom(sockfd, recvBuffer, sizeof(recvBuffer), 0, (struct sockaddr*)&serverAddr, &serverAddrLen);
+        cout << "Received response: " << recvBuffer << endl;
+    }
+
+    void simulate(int numRequests) {
+        for (int i = 0; i < numRequests; i++) {
+            sendRequest();
+            cout << "Sent request " << i + 1 << endl;
+            receiveResponse();
+        }
+    }
+};
