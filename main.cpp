@@ -1,12 +1,6 @@
 // #include "client.h"
 // #include "server.h"
-
-// congest
-#include "congest_client.cpp"
-#include "congest_server.cpp"
-
-#include <QCoreApplication>
-#include <iostream>
+// #include <QCoreApplication>
 
 // int main(int argc, char *argv[]) {
 //     QCoreApplication a(argc, argv);
@@ -28,27 +22,43 @@
 // }
 
 
-using namespace std;
 // congest
+#include "congest_client.cpp"
+#include "congest_server.cpp"
+
+#include <QThread>
+#include <QCoreApplication>
+
+class ServerThread : public QThread {
+    // Q_OBJECT
+public:
+    void run() override {
+        Server server;
+        server.simulate(100);
+    }
+};
+
+class ClientThread : public QThread {
+    // Q_OBJECT
+public:
+    void run() override {
+        Client client;
+        client.simulate(100);
+    }
+};
+
 int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
-    srand(time(nullptr));
 
-    Server server;
-    Client client;
+    ServerThread serverThread;
+    ClientThread clientThread;
 
-    cout << "Scenario 1: No packet loss" << endl;
-    server.simulate(100);
+    serverThread.start();
+    clientThread.start();
 
-    cout << "\nScenario 2: Frequent packet loss" << endl;
-    srand(42); // Seed for reproducible packet loss
-    server.simulate(100);
+    serverThread.wait();
+    clientThread.wait();
 
-    cout << "\nScenario 3: Client simulation" << endl;
-    client.simulate(10);
-
-    return a.exec();
+    return 0;
 }
-
-
 
