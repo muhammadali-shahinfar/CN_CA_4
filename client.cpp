@@ -7,7 +7,7 @@
 sockaddr_in client::create_sockaddr_in() {
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(8025 + this->client_number);
+    serverAddress.sin_port = htons(8025);
     serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     return serverAddress;
@@ -134,4 +134,3 @@ void client::end_simulation() {
     closesocket(client_socket);
     WSACleanup();
 }
-

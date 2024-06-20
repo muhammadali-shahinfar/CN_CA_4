@@ -9,6 +9,7 @@ class serverThread : public QThread
 public:
     explicit serverThread(int n,QObject *parent = nullptr);
     void run() override;
+    void connection_income(SOCKET new_socket);
 private:
     void recv_syn();
     void send_syn_ack();
@@ -21,7 +22,6 @@ private:
     int client_num;
     SOCKET server_socket;
     void end_simulation(SOCKET init_socket);
-    sockaddr_in create_sockaddr_in();
     void start_messaging();
 };
 

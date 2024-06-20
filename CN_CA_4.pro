@@ -12,7 +12,8 @@ SOURCES += \
         congest_server.cpp \
         main.cpp \
         server.cpp \
-        serverthread.cpp
+        serverthread.cpp \
+        slidingwindowclient.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -23,4 +24,5 @@ HEADERS += \
     client.h \
     defs.h \
     server.h \
-    serverthread.h
+    serverthread.h \
+    slidingwindowclient.h

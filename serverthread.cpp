@@ -7,29 +7,7 @@ serverThread::serverThread(int n,QObject *parent) : QThread{parent} {
     this->client_num = n;
 }
 
-sockaddr_in serverThread::create_sockaddr_in() {
-    sockaddr_in serverAddress;
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(8025 + this->client_num);
-    serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
-    return serverAddress;
-}
-
 void serverThread::run(){
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        printf("WSAStartup failed.\n");
-        exit(EXIT_FAILURE);
-    }
-    SOCKET init_socket;
-    if((init_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0){
-        std::cout <<(WSAGetLastError());
-        exit(EXIT_FAILURE);
-    }
-    sockaddr_in serverAddress = create_sockaddr_in();
-    bind(init_socket, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
-    listen(init_socket, 5);
-    this->server_socket = accept(init_socket, nullptr, nullptr);
     start_messaging();
 }
 
@@ -120,4 +98,8 @@ bool serverThread::handle_message(char* buffer){
         return true;
     }
 
+}
+
+void serverThread::connection_income(SOCKET new_socket){
+    this->server_socket = new_socket;
 }
