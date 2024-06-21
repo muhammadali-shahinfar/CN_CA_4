@@ -20,22 +20,25 @@ void client::start_messaging() {
     send_message();
 }
 
-client::client(int n,QObject *parent) : QObject{parent} {
+client::client(int n,bool use_tcp,QObject *parent) : QObject{parent} {
     QThread* new_router_thread = new QThread();
     this->moveToThread(new_router_thread);
     this->client_number = n;
+    this->use_TCP = use_tcp;
 
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
         printf("WSAStartup failed.\n");
         exit(EXIT_FAILURE);
     }
-    this->client_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if(this->use_TCP)
+        this->client_socket = socket(AF_INET, SOCK_STREAM, 0);
+    else
+        this->client_socket = socket(AF_INET, SOCK_DGRAM, 0);
     // specifying address
     sockaddr_in serverAddress = create_sockaddr_in();
     // sending connection request
     WSAAPI::connect(client_socket, (struct sockaddr *)&serverAddress, sizeof(serverAddress));
-    start_messaging();
 
 }
 
@@ -117,6 +120,7 @@ void client::send_message(){
         }
     }
 }
+
 
 QList<std::string> client::create_packets(std::string message){
     std::replace(message.begin(), message.end(), ' ', '$');

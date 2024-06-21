@@ -16,9 +16,11 @@ int main(int argc, char *argv[]) {
     std::cin >> i;
     if(i ==0){
         Server* server = new Server();
+        server->new_connection();
     }
     else{
         client* new_client = new client(i);
+        new_client->start_messaging();
 
     }
 

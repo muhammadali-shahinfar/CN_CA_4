@@ -10,9 +10,13 @@ class Server : public QObject
 public:
     explicit Server(QObject *parent = nullptr);
 
-private:
+    void new_connection();
+
+    SOCKET connection_detail(int port);
+
+protected:
     void connect_to_client();
-    sockaddr_in create_sockaddr_in();
+    sockaddr_in create_sockaddr_in(int port);
 
 
 signals:

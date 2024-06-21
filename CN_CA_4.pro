@@ -1,5 +1,5 @@
 QT = core
-
+QT += network
 CONFIG += c++17 cmdline
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -11,6 +11,7 @@ SOURCES += \
         congest_client.cpp \
         congest_server.cpp \
         main.cpp \
+        router.cpp \
         server.cpp \
         serverthread.cpp \
         slidingwindowclient.cpp
@@ -23,6 +24,7 @@ LIBS += -lws2_32
 HEADERS += \
     client.h \
     defs.h \
+    router.h \
     server.h \
     serverthread.h \
     slidingwindowclient.h
