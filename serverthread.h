@@ -10,7 +10,7 @@ public:
     explicit serverThread(int n,QObject *parent = nullptr);
     void run() override;
     void connection_income(SOCKET new_socket);
-private:
+protected:
     void recv_syn();
     void send_syn_ack();
     void send_ack();

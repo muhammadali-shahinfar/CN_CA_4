@@ -14,7 +14,8 @@ SOURCES += \
         router.cpp \
         server.cpp \
         serverthread.cpp \
-        slidingwindowclient.cpp
+        slidingwindowclient.cpp \
+        slidingwindowserverthread.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -27,4 +28,5 @@ HEADERS += \
     router.h \
     server.h \
     serverthread.h \
-    slidingwindowclient.h
+    slidingwindowclient.h \
+    slidingwindowserverthread.h

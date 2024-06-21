@@ -70,7 +70,7 @@ void SlidingWindowClient::receive_ack(){
     }
     if(received_ack == 0){
         std::cout << buffer << std::endl;
-        this->send_ack()
+        this->send_ack();
     }
 
 }
