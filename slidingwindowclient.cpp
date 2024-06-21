@@ -6,11 +6,56 @@
 #include <windows.h>
 #include <ws2tcpip.h>
 #include <iostream>
+#include <winsock2.h>
 
 SlidingWindowClient::SlidingWindowClient(int n,int go_back_N,QObject *parent)
     : client{n,false,parent}
 {
-    this->go_back_N = go_back_N;
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        printf("WSAStartup failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    SOCKET router = socket(AF_INET, SOCK_DGRAM, 0);
+    if (router == INVALID_SOCKET) {
+        printf("Error creating socket: %d\n", WSAGetLastError());
+        WSACleanup();
+        exit(EXIT_FAILURE);
+    }
+
+    struct sockaddr_in host_address;
+    memset(&host_address, 0, sizeof(host_address));
+    host_address.sin_family = AF_INET;
+    host_address.sin_port = htons(8085);
+    host_address.sin_addr.s_addr = inet_addr("127.0.0.1"); // Assuming the host is on local machine
+
+    const char* buffer = "hello";
+    int result = sendto(router, buffer, strlen(buffer), 0, (const struct sockaddr*)&host_address, sizeof(host_address));
+    if (result == SOCKET_ERROR) {
+        printf("sendto failed with error: %d\n", WSAGetLastError());
+    }
+    else {
+        printf("Bytes sent: %d\n", result);
+    }
+    int len;
+    struct sockaddr_in client_address;
+    len = sizeof(client_address);
+    while(true){
+        char abbas[1024];
+        int n = recvfrom(router, (char*)abbas, 1700, 0, (struct sockaddr *)&client_address,&len );
+        if (n == SOCKET_ERROR) {
+            printf("recvfrom failed with error: %d\n", WSAGetLastError());
+        }
+        else {
+            abbas[n] = '\0';  // Null-terminate the received data
+            std::cout << "Client: " << abbas << std::endl;
+        }
+    }
+
+    closesocket(router);
+    WSACleanup();
+
 }
 void SlidingWindowClient::send_file(QString path){
     QFile file(path);
@@ -49,7 +94,7 @@ void SlidingWindowClient::handle_window()
 }
 
 void SlidingWindowClient::send_buffer(int l){
-    sockaddr_in addr = this->create_sockaddr_in();
+    sockaddr_in addr = this->create_sockaddr_in(8085);
 
     socklen_t clilen;
     for(int i=l;i<this->output_buffer.size();i++){
@@ -58,7 +103,7 @@ void SlidingWindowClient::send_buffer(int l){
 }
 
 void SlidingWindowClient::receive_ack(){
-    sockaddr_in addr = this->create_sockaddr_in();
+    sockaddr_in addr = this->create_sockaddr_in(8085);
     socklen_t len;
     char * buffer = new char[1700];
     int n = recvfrom(this->client_socket,(char*)buffer,1536,MSG_WAITALL, (struct sockaddr *) &addr, &len);

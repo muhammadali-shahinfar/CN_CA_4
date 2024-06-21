@@ -1,9 +1,34 @@
 #include "client.h"
+#include "router.h"
 #include "server.h"
+#include "slidingwindowclient.h"
 
 // congest
 // #include "congest_client.cpp"
 // #include "congest_server.cpp"
+
+// #include <QCoreApplication>
+// #include <iostream>
+
+// int main(int argc, char *argv[]) {
+//     QCoreApplication a(argc, argv);
+
+//     int i;
+//     std::cout<<"To run server enter 0 and for clilent enter 1"<<std::endl;
+//     std::cin >> i;
+//     if(i ==0){
+//         Server* server = new Server();
+//         server->new_connection();
+//     }
+//     else{
+//         client* new_client = new client(i);
+//         new_client->start_messaging();
+
+//     }
+
+//     return a.exec();
+// }
+
 
 #include <QCoreApplication>
 #include <iostream>
@@ -15,18 +40,17 @@ int main(int argc, char *argv[]) {
     std::cout<<"To run server enter 0 and for clilent enter 1"<<std::endl;
     std::cin >> i;
     if(i ==0){
-        Server* server = new Server();
-        server->new_connection();
+        router* server = new router();
+        // server->new_connection();
     }
     else{
-        client* new_client = new client(i);
-        new_client->start_messaging();
+        SlidingWindowClient* new_client = new SlidingWindowClient(1,8);
+        // new_client->start_messaging();
 
     }
 
     return a.exec();
 }
-
 
 // using namespace std;
 // // congest

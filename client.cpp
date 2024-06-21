@@ -4,10 +4,10 @@
 #include <algorithm>
 #include <QThread>
 
-sockaddr_in client::create_sockaddr_in() {
+sockaddr_in client::create_sockaddr_in(int port) {
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(8085);
+    serverAddress.sin_port = htons(port);
     serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     return serverAddress;
@@ -36,7 +36,7 @@ client::client(int n,bool use_tcp,QObject *parent) : QObject{parent} {
     else
         this->client_socket = socket(AF_INET, SOCK_DGRAM, 0);
     // specifying address
-    sockaddr_in serverAddress = create_sockaddr_in();
+    sockaddr_in serverAddress = create_sockaddr_in(8085);
     // sending connection request
     WSAAPI::connect(client_socket, (struct sockaddr *)&serverAddress, sizeof(serverAddress));
 

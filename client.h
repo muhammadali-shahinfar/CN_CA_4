@@ -18,7 +18,7 @@ protected:
     int sync_value;
     int server_sync_value;
     int client_number;
-    sockaddr_in create_sockaddr_in();
+    sockaddr_in create_sockaddr_in(int port);
     void send_SYN();
     bool recv_ack();
     void recv_ack_syn();

@@ -7,7 +7,7 @@ sockaddr_in Server::create_sockaddr_in(int port) {
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_port = htons(port );
-    serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
+    serverAddress.sin_addr.s_addr = INADDR_ANY;
     return serverAddress;
 }
 

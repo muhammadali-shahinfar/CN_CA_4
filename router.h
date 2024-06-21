@@ -12,9 +12,7 @@ public:
     void read_ready_A();
     // void read_ready_B();
 private:
-    SOCKET host_A;
-    SOCKET host_B;
-    QList<std::string> output_buffer;
+    QList<slidingWindowServerThread*> threads;
 };
 
 #endif // ROUTER_H
