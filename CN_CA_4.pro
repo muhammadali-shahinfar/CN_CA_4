@@ -14,7 +14,7 @@ SOURCES += \
         router.cpp \
         server.cpp \
         serverthread.cpp \
-        slidingwindowclient.cpp \
+        slidingwindowSender.cpp \
         slidingwindowserverthread.cpp
 
 # Default rules for deployment.
@@ -28,5 +28,5 @@ HEADERS += \
     router.h \
     server.h \
     serverthread.h \
-    slidingwindowclient.h \
+    slidingwindowsender.h \
     slidingwindowserverthread.h

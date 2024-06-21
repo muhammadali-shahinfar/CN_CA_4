@@ -1,7 +1,7 @@
 #include "client.h"
 #include "router.h"
 #include "server.h"
-#include "slidingwindowclient.h"
+#include "slidingwindowsender.h"
 
 // congest
 // #include "congest_client.cpp"
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
         // server->new_connection();
     }
     else{
-        SlidingWindowClient* new_client = new SlidingWindowClient(1,8);
+        SlidingWindowSender* new_client = new SlidingWindowSender(i,8);
         // new_client->start_messaging();
 
     }

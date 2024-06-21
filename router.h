@@ -3,16 +3,12 @@
 
 #include "server.h"
 #include <QUdpSocket>
-
+#include "slidingwindowserverthread.h"
 class router : public Server
 {
 public:
     explicit router(QObject *parent = nullptr);
-    // void write_data(const QString&);
-    void read_ready_A();
-    // void read_ready_B();
 private:
-    QList<slidingWindowServerThread*> threads;
 };
 
 #endif // ROUTER_H

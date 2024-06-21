@@ -6,7 +6,7 @@
 #include <QObject>
 
 class client : public QObject {
-    // Q_OBJECT
+     // Q_OBJECT
 public:
     client(int n,bool use_tcp=true,QObject *parent=nullptr);
     void start_messaging();
