@@ -36,7 +36,7 @@ client::client(int n,bool use_tcp,QObject *parent) : QObject{parent} {
     else
         this->client_socket = socket(AF_INET, SOCK_DGRAM, 0);
     // specifying address
-    sockaddr_in serverAddress = create_sockaddr_in(8085);
+    sockaddr_in serverAddress = create_sockaddr_in(65258);
     // sending connection request
     WSAAPI::connect(client_socket, (struct sockaddr *)&serverAddress, sizeof(serverAddress));
 

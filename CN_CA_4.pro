@@ -11,11 +11,12 @@ SOURCES += \
         congest_client.cpp \
         congest_server.cpp \
         main.cpp \
+        receiverclient.cpp \
         router.cpp \
+        senderclient.cpp \
         server.cpp \
         serverthread.cpp \
-        slidingwindowSender.cpp \
-        slidingwindowserverthread.cpp
+        udpclient.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -25,8 +26,9 @@ LIBS += -lws2_32
 HEADERS += \
     client.h \
     defs.h \
+    receiverclient.h \
     router.h \
+    senderclient.h \
     server.h \
     serverthread.h \
-    slidingwindowsender.h \
-    slidingwindowserverthread.h
+    udpclient.h
